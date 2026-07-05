@@ -1,5 +1,12 @@
 # Isotherm
 
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22+-339933?logo=node.js&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)# Isotherm
+
 A weather application built with Next.js 14.
 
 The project combines current weather, short-term forecasts, historical weather retrieval, persistent storage, and a small set of utility features (maps, related videos, exports) into a single application. The backend is implemented using Next.js API routes and SQLite, so the project runs as a single service without additional infrastructure.
