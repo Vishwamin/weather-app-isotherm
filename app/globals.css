@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body {
+  background-color: #0A1118;
+  color: #EDEFF0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* Tick-mark divider — reads as an instrument scale, not decoration */
+.tick-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #28394B 10%, #28394B 90%, transparent);
+}
+.tick-divider::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #3A4E63 0,
+    #3A4E63 1px,
+    transparent 1px,
+    transparent 24px
+  );
+  opacity: 0.6;
+}
+
+.readout-label {
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: #7C8DA0;
+}
+
+.scroll-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #28394B transparent;
+}
+.scroll-strip::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-strip::-webkit-scrollbar-thumb {
+  background: #28394B;
+  border-radius: 999px;
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-drift {
+  animation: drift 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift {
+    animation: none;
+  }
+  * {
+    transition: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid #4FD1C5;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
