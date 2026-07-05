@@ -1,92 +1,151 @@
-# Isotherm — Weather Console
+# Isotherm
 
-Full-stack weather app built by **Vishwamin Patha** for the PM Accelerator AI Engineer Intern technical assessment (covers **both** Tech Assessment #1 — Frontend and Tech Assessment #2 — Backend).
+A weather application built with Next.js 14.
 
-Live weather + forecast, a persistent "weather logbook" with full CRUD, map + video enrichment, and multi-format export — all built on **free, keyless APIs**, so there's nothing to configure before running it.
+The project combines current weather, short-term forecasts, historical weather retrieval, persistent storage, and a small set of utility features (maps, related videos, exports) into a single application. The backend is implemented using Next.js API routes and SQLite, so the project runs as a single service without additional infrastructure.
+
+No API keys are required.
+
+## Features
+
+- Search by city, town, postal code, landmark, or coordinates.
+- Browser geolocation support.
+- Current weather conditions.
+- Five-day forecast.
+- Historical weather retrieval over a selected date range.
+- Persistent weather logbook backed by SQLite.
+- Full CRUD interface for saved records.
+- Google Maps embedding for searched locations.
+- Embedded YouTube search for location-specific videos.
+- Export records as JSON, CSV, XML, Markdown, or PDF.
+- Responsive layout.
 
 ## Stack
 
-- **Framework:** Next.js 14 (App Router) — React + Node in one project, satisfying "no Python/Java framework for the frontend" while still giving a real backend.
-- **Styling:** Tailwind CSS, custom "instrument panel" design system (see design notes below).
-- **Icons:** lucide-react
-- **Database:** Node's built-in `node:sqlite` (zero native dependencies — nothing to compile, just `npm install` and go). Requires **Node.js ≥ 22.5**.
-- **Weather data:** [Open-Meteo](https://open-meteo.com) (current conditions, 5-day forecast, and historical archive) — free, no API key.
-- **Geocoding:** Open-Meteo Geocoding API — resolves city/town/postal-code/landmark text to coordinates, with a fuzzy fallback.
-- **Map:** Google Maps embed (`/maps?...&output=embed`) — no API key needed.
-- **Video:** YouTube embed player's `listType=search` mode — no API key needed.
-- **PDF export:** jsPDF (client-side).
+| Component | Technology |
+| ---------- | ---------- |
+| Framework | Next.js 14 (App Router) |
+| UI | React |
+| Styling | Tailwind CSS |
+| Backend | Next.js Route Handlers |
+| Database | SQLite (`node:sqlite`) |
+| Weather | Open-Meteo |
+| Geocoding | Open-Meteo Geocoding |
+| Maps | Google Maps Embed |
+| Video | YouTube Embed |
+| Export | jsPDF |
 
-## Running it locally
+## Architecture
+
+```
+Browser
+    │
+    ▼
+Next.js
+ ├── React UI
+ ├── API Routes
+ └── SQLite
+
+API Routes
+    ├── Open-Meteo
+    ├── Geocoding
+    ├── CRUD
+    └── Export
+```
+
+## Repository layout
+
+```
+app/
+    api/
+    page.jsx
+    layout.jsx
+
+components/
+
+lib/
+    db.js
+    export.js
+    weatherCodes.js
+    color.js
+
+data/
+```
+
+## Running
+
+Requirements
+
+- Node.js 22.5+
+- npm
+
+Install dependencies.
 
 ```bash
 npm install
+```
+
+Start the development server.
+
+```bash
 npm run dev
 ```
 
-Open http://localhost:3000. That's it — no `.env` file, no API keys.
+Open
 
-For a production build:
+```
+http://localhost:3000
+```
+
+For a production build,
 
 ```bash
 npm run build
 npm start
 ```
 
-## What's implemented (mapped to the assessment brief)
+## Data model
 
-**Core (both tracks)**
-- Location entry by city, town, postal/ZIP code, landmark name, or raw `lat, lon` — resolved server-side with a fuzzy-match fallback if the exact string isn't found.
-- "Use my location" via browser Geolocation.
-- Current conditions (temp, feels-like, humidity, wind, precipitation) with condition icons.
-- 5-day forecast strip.
-- Candidate name + PM Accelerator description in the footer.
+Weather records contain
 
-**1.1 / 1.2 — Forecast & error handling**
-- 5-day forecast (`components/Forecast.jsx`).
-- Graceful error banners for "location not found," failed API calls, and network errors (`components/ErrorBanner.jsx`), surfaced from both the search bar and the logbook form.
+- location
+- coordinates
+- date range
+- weather data
+- notes
 
-**2.1 — CRUD**
-- **Create:** enter a location + date range → server resolves the location, validates the range (start ≤ end, ≤ 31 days), fetches real daily temps (forecast API for recent/future dates, historical archive API for older ranges), and persists it.
-- **Read:** logbook table lists every saved entry (shared across all users of this app instance — no auth/row-level security, matching the brief).
-- **Update:** inline edit of the notes field (and the API supports updating the date range) via `PUT /api/records/:id`.
-- **Delete:** `DELETE /api/records/:id`.
-- Data lives in `data/weather.db` (SQLite file, created automatically).
+The SQLite database is created automatically on first launch.
 
-**2.2 — Extra API integration**
-- Google Maps embed of the searched location.
-- YouTube "videos of this place" panel.
+## External services
 
-**2.3 — Data export**
-- Export the whole logbook to **JSON, CSV, XML, Markdown, and PDF** from the toolbar above the table (`lib/export.js`).
+Open-Meteo provides current conditions, forecasts, historical weather, and geocoding.
 
-## Design notes
+Google Maps is used for map embedding.
 
-The visual language is built around a "meteorological instrument" idea rather than a generic dashboard: a dark "night sky" base, an *isotherm bar* (the signature element — a live gradient strip whose color stops are computed from real fetched temperatures, functioning as a genuine data readout rather than decoration), tick-mark dividers styled like an instrument scale, and a mixed type system (Space Grotesk for large readouts, Inter for body copy, IBM Plex Mono for coordinates/timestamps/data — echoing an instrument panel's numeric readouts).
+YouTube is used to embed search results related to the selected location.
 
-Fully responsive: single-column stacked layout on mobile, the forecast strip becomes horizontally scrollable, and the logbook table scrolls horizontally on narrow screens.
+All services used are publicly accessible without authentication.
 
-## Project structure
+## Notes
 
-```
-app/
-  api/
-    geocode/route.js       # location text -> coordinates (with fuzzy fallback)
-    weather/route.js       # current + 5-day forecast
-    records/route.js       # CRUD: list (GET) + create (POST)
-    records/[id]/route.js  # CRUD: read/update/delete one record
-  page.jsx                  # main UI
-  layout.jsx, globals.css
-components/                 # UI building blocks
-lib/
-  db.js                     # SQLite schema + queries
-  export.js                 # JSON/CSV/XML/Markdown/PDF export
-  weatherCodes.js            # WMO code -> icon/label mapping
-  color.js                   # temperature -> color (isotherm bar)
-data/                        # SQLite file lives here (gitignored)
-```
+The UI is built around a simple weather-console aesthetic. The temperature gradient ("isotherm bar") is generated directly from fetched temperatures instead of using predefined colors. Typography separates interface labels from numeric readouts to make weather data easier to scan.
 
-## Submitting
+## Possible extensions
 
-1. Push this repo to GitHub (public, or private with `community@pmaccelerator.io` and `hr@pmaccelerator.io` added as collaborators).
-2. Record a 1–2 minute demo (search a location, log a date range, edit/delete a record, export data) and host it on Drive/YouTube.
-3. Submit the assessment form with the repo link, demo link, and a note that both Assessment #1 and #2 are covered.
+- User accounts
+- Saved locations
+- AQI support
+- Weather radar
+- Charts
+- PWA support
+- Theme switching
+
+## License
+
+MIT
+
+## Author
+
+Vishwamin Patha
+
+GitHub: https://github.com/Vishwamin
