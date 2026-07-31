@@ -5,7 +5,9 @@
 ![Node.js](https://img.shields.io/badge/Node.js-22+-339933?logo=node.js&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)# Isotherm
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
+# Isotherm
 
 A weather application built with Next.js 14.
 
